@@ -1,0 +1,44 @@
+#SINGLE SOURCE
+
+full.modsingle <- glmer(score_bin ~ 1 + target_segment_length  + (1 | subject_id), 
+                     data = mastersingle, family = binomial(link = "logit"))
+
+
+red.modsingle <- glmer(score_bin ~ 1 +  (1 | subject_id), 
+                       data = mastersingle, family = binomial(link = "logit"))
+
+red.modsingle <- glm(score_bin ~ 1 + target_segment_length, 
+                  data = mastersingle, family = binomial(link = "logit"))
+
+anova(red.modsingle,full.modsingle) #for comparng two lmer
+anova(full.modsingle,red.modsingle) #for comparing lmer to lm
+#no sig impact if target gender 0.6086  
+#masker sml sig impact p = < 2.2e-16 ***
+#sig. impact of subject_id p = 2.962e-05 ***
+
+summary(full.modsingle)
+
+#Correlation of Fixed Effects:
+#             (Intr)
+#trgt_sgmnt_ -0.839
+
+check_model(full.modsingle)
+check_residuals(full.modsingle) #OK: Simulated residuals appear as uniformly distributed (p = 0.629).
+
+#posthoc testing
+
+posthocsingle <- pairwise.t.test(mastersingle$score, mastersingle$target_segment_length, p.adjust.method = "bonferroni")
+print(posthocsingle)
+#       0.03    0.06    0.09    0.12   
+#  0.06 0.00043 -       -       -      
+#  0.09 < 2e-16 < 2e-16 -       -      
+#  0.12 < 2e-16 < 2e-16 1.4e-06 -      
+#  0.15 < 2e-16 < 2e-16 1.3e-15 0.02117
+
+# Create a subset of the pairwise t-test results matrix with only significant pairs
+sig_pairssingle <- posthocsingle$p.value < signif
+
+# Replace non-significant pairs with NA
+sig_pairssingle[upper.tri(sig_pairssingle)] <- NA
+
+
