@@ -1,0 +1,37 @@
+#neuer dataframe mit mean responsenses für jede sml
+# Convert 'task_plane' to a factor variable
+mastermean$task_plane <- factor(mastermean$task_plane)
+
+# Change the reference level of 'task_plane' to 'collocated'
+mastermean$task_plane <- relevel(mastermean$task_plane, ref = "collocated")
+
+#model with nice p values and residuals
+#big.mod <- lmer(mean_score_bin ~ 1  + masker_segment_length + as.factor(task_plane) + masker_segment_length:as.factor(task_plane) + (1 | subject_id)
+#, data=mastermean, control=lmerControl(optimizer = "nmkbw"))
+
+big.mod <- lmer(mean_score_bin ~ 1 + as.factor(task_plane) + masker_segment_length:as.factor(task_plane) + (1 | subject_id)
+                      , data=mastermean, control=lmerControl(optimizer = "nmkbw"))
+
+red.mod <- lmer(mean_score_bin ~ 1   + as.factor(task_plane)  + (1 | subject_id)
+                   , data=mastermean, control=lmerControl(optimizer = "nmkbw"))
+
+red.mod <- lm(mean_score_bin~ 1  + as.factor(task_plane) + masker_segment_length:as.factor(task_plane) 
+                 , data=mastermean)
+
+
+anova(red.mod, big.mod)
+anova(big.mod,red.mod)
+#sig. impact of task plane: p = 0.002955 **
+#sig. impact of interaction p < 2.2e-16 ***
+#sig. impact of subject ID p = 1.112e-15 ***
+
+summary(big.mod)
+
+check_model(big.mod)
+check_residuals(big.mod)
+#OK: Simulated residuals appear as uniformly distributed (p = 0.303).
+
+check_collinearity(big.mod)
+
+
+
