@@ -1,0 +1,481 @@
+
+# Define the participants and segment lengths
+participants <- unique(mastercol$subject_id)
+segment_length <- unique(mastercol$masker_segment_length)
+
+# Initialize an empty dataframe to store the results
+errorcol <- data.frame(
+  Participant = integer(),
+  SegmentLength = numeric(),
+  Correct = integer(),
+  CorrectPercentage = numeric(),
+  MaskerErrors = integer(),
+  MaskerErrorsPercentage = numeric(),
+  MixedErrors = integer(),
+  MixedErrorsPercentage = numeric(),
+  Drop1Errors = integer(),
+  Drop1ErrorsPercentage = numeric(),
+  Drop2Errors = integer(),
+  Drop2ErrorsPercentage = numeric(),
+  CombinationErrors = integer(),
+  CombinationErrorsPercentage = numeric()
+)
+
+# Loop over each participant
+for (participant in participants) {
+  # Loop over each segment length
+  for (segment_length in segment_lengths) {
+    # Filter the data for the current participant and segment length
+    participant_data <- mastercol %>%
+      filter(subject_id == participant & masker_segment_length == segment_length)
+    
+    # Calculate the total number of responses for the current segment length
+    total_responses <- nrow(participant_data)
+    
+    # Calculate the errors using the provided logic
+    correct <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 1)
+    masker_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker == 1)
+    mixed_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker != 0 & participant_data$score_masker != 1 & participant_data$score != 0 & participant_data$score != 1)
+    drop1_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score != 0 & participant_data$score != 1 & participant_data$score_masker == 0)
+    drop2_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker == 0)
+    combination_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker != 1 & participant_data$score_masker != 0)
+    
+    # Calculate the percentages for each error type
+    correct_percentage <- (correct / total_responses) * 100
+    masker_errors_percentage <- (masker_errors / total_responses) * 100
+    mixed_errors_percentage <- (mixed_errors / total_responses) * 100
+    drop1_errors_percentage <- (drop1_errors / total_responses) * 100
+    drop2_errors_percentage <- (drop2_errors / total_responses) * 100
+    combination_errors_percentage <- (combination_errors / total_responses) * 100
+    
+    # Create a temporary dataframe with the current result
+    temp_result <- data.frame(
+      Participant = participant,
+      SegmentLength = segment_length,
+      Correct = correct,
+      CorrectPercentage = correct_percentage,
+      MaskerErrors = masker_errors,
+      MaskerErrorsPercentage = masker_errors_percentage,
+      MixedErrors = mixed_errors,
+      MixedErrorsPercentage = mixed_errors_percentage,
+      Drop1Errors = drop1_errors,
+      Drop1ErrorsPercentage = drop1_errors_percentage,
+      Drop2Errors = drop2_errors,
+      Drop2ErrorsPercentage = drop2_errors_percentage,
+      CombinationErrors = combination_errors,
+      CombinationErrorsPercentage = combination_errors_percentage
+    )
+    
+    # Append the temporary result to the main results dataframe
+    errorcol <- rbind(results, temp_result)
+  }
+}
+
+# Print the results
+print(errorcol)
+# Define a function to calculate errors and percentages
+calculate_errors <- function(data) {
+  participants <- unique(data$subject_id)
+  segment_lengths <- unique(data$masker_segment_length)
+  
+  # Initialize an empty dataframe to store the results
+  results <- data.frame(
+    Participant = integer(),
+    SegmentLength = numeric(),
+    Correct = integer(),
+    CorrectPercentage = numeric(),
+    MaskerErrors = integer(),
+    MaskerErrorsPercentage = numeric(),
+    MixedErrors = integer(),
+    MixedErrorsPercentage = numeric(),
+    Drop1Errors = integer(),
+    Drop1ErrorsPercentage = numeric(),
+    Drop2Errors = integer(),
+    Drop2ErrorsPercentage = numeric(),
+    CombinationErrors = integer(),
+    CombinationErrorsPercentage = numeric()
+  )
+  
+  # Loop over each participant
+  for (participant in participants) {
+    # Loop over each segment length
+    for (segment_length in segment_lengths) {
+      # Filter the data for the current participant and segment length
+      participant_data <- data %>%
+        filter(subject_id == participant & masker_segment_length == segment_length)
+      
+      # Calculate the total number of responses for the current segment length
+      total_responses <- nrow(participant_data)
+      
+      # Calculate the errors using the provided logic
+      correct <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 1)
+      masker_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker == 1)
+      mixed_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker != 0 & participant_data$score_masker != 1 & participant_data$score != 0 & participant_data$score != 1)
+      drop1_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score != 0 & participant_data$score != 1 & participant_data$score_masker == 0)
+      drop2_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker == 0)
+      combination_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker != 1 & participant_data$score_masker != 0)
+      
+      # Calculate the percentages for each error type
+      correct_percentage <- (correct / total_responses) * 100
+      masker_errors_percentage <- (masker_errors / total_responses) * 100
+      mixed_errors_percentage <- (mixed_errors / total_responses) * 100
+      drop1_errors_percentage <- (drop1_errors / total_responses) * 100
+      drop2_errors_percentage <- (drop2_errors / total_responses) * 100
+      combination_errors_percentage <- (combination_errors / total_responses) * 100
+      
+      # Create a temporary dataframe with the current result
+      temp_result <- data.frame(
+        Participant = participant,
+        SegmentLength = segment_length,
+        Correct = correct,
+        CorrectPercentage = correct_percentage,
+        MaskerErrors = masker_errors,
+        MaskerErrorsPercentage = masker_errors_percentage,
+        MixedErrors = mixed_errors,
+        MixedErrorsPercentage = mixed_errors_percentage,
+        Drop1Errors = drop1_errors,
+        Drop1ErrorsPercentage = drop1_errors_percentage,
+        Drop2Errors = drop2_errors,
+        Drop2ErrorsPercentage = drop2_errors_percentage,
+        CombinationErrors = combination_errors,
+        CombinationErrorsPercentage = combination_errors_percentage
+      )
+      
+      # Append the temporary result to the main results dataframe
+      results <- rbind(results, temp_result)
+    }
+  }
+  
+  return(results)
+}
+
+# Apply the function to each dataframe
+errorazi <- calculate_errors(masterazi)
+errorfb <- calculate_errors(masterfb)
+errorelev <- calculate_errors(masterelev)
+errorcol <- calculate_errors(mastercol)
+
+write.csv(errorazi, "error_azi.csv", row.names = FALSE)
+write.csv(errorfb, "error_fb.csv", row.names = FALSE)
+write.csv(errorelev, "error_elev.csv", row.names = FALSE)
+write.csv(errorcol, "error_col.csv", row.names = FALSE)
+
+errorcolshort <- errorcol %>%
+  filter(SegmentLength %in% c("0.03", "0.06", "0.09"))
+
+errorfbshort <- errorfb %>%
+  filter(SegmentLength %in% c("0.03", "0.06", "0.09"))
+
+errorelevshort <- errorelev %>%
+  filter(SegmentLength %in% c("0.03", "0.06", "0.09"))
+
+write.csv(errorazishort, "error_azi_short.csv", row.names = FALSE)
+write.csv(errorfbshort, "error_fb_short.csv", row.names = FALSE)
+write.csv(errorelevshort, "error_elev_short.csv", row.names = FALSE)
+write.csv(errorcolshort, "error_col_short.csv", row.names = FALSE)
+
+#dataframe with coloum with error percentage and another collumn with error type and one more with setting
+
+
+
+mean(errorelev$MaskerErrorsPercentage[errorelev$SegmentLength == 0.03])
+#37.06
+
+mean(errorfb$MaskerErrorsPercentage[errorfb$SegmentLength == 0.03])
+#27.56
+
+tableerrorelev <- errorelev %>%
+  group_by(SegmentLength) %>%
+  summarise(
+    MeanMaskerError = mean(MaskerErrorsPercentage, na.rm = TRUE),
+    MeanMixedError = mean(MixedErrorsPercentage, na.rm = TRUE),
+    MeanDrop1Error = mean(Drop1ErrorsPercentage, na.rm = TRUE),
+    MeanDrop2Error = mean(Drop2ErrorsPercentage, na.rm = TRUE),
+    MeanCombinationError = mean(CombinationErrorsPercentage, na.rm = TRUE)
+  )
+
+tableerrorfb <- errorfb %>%
+  group_by(SegmentLength) %>%
+  summarise(
+    MeanMaskerError = mean(MaskerErrorsPercentage, na.rm = TRUE),
+    MeanMixedError = mean(MixedErrorsPercentage, na.rm = TRUE),
+    MeanDrop1Error = mean(Drop1ErrorsPercentage, na.rm = TRUE),
+    MeanDrop2Error = mean(Drop2ErrorsPercentage, na.rm = TRUE),
+    MeanCombinationError = mean(CombinationErrorsPercentage, na.rm = TRUE)
+  )
+
+tableerrorcol <- errorcol %>%
+  group_by(SegmentLength) %>%
+  summarise(
+    MeanMaskerError = mean(MaskerErrorsPercentage, na.rm = TRUE),
+    MeanMixedError = mean(MixedErrorsPercentage, na.rm = TRUE),
+    MeanDrop1Error = mean(Drop1ErrorsPercentage, na.rm = TRUE),
+    MeanDrop2Error = mean(Drop2ErrorsPercentage, na.rm = TRUE),
+    MeanCombinationError = mean(CombinationErrorsPercentage, na.rm = TRUE)
+  )
+
+tableerrorazi <- errorazi %>%
+  group_by(SegmentLength) %>%
+  summarise(
+    MeanMaskerError = mean(MaskerErrorsPercentage, na.rm = TRUE),
+    MeanMixedError = mean(MixedErrorsPercentage, na.rm = TRUE),
+    MeanDrop1Error = mean(Drop1ErrorsPercentage, na.rm = TRUE),
+    MeanDrop2Error = mean(Drop2ErrorsPercentage, na.rm = TRUE),
+    MeanCombinationError = mean(CombinationErrorsPercentage, na.rm = TRUE)
+  )
+
+#=======ERROR-STATS=========================================================
+#==================
+#COLLOCATED
+
+#MASKER ERRORS
+anovaerrorcol <- aov(MaskerErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorcol)
+summary(anovaerrorcol)
+#p=6.29e-12 ***
+
+posthocerrorcol <- pairwise.t.test(errorcol$MaskerErrorsPercentage, errorcol$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorcol)
+#      0.03    0.06   0.09   0.12  
+#0.06  2.5e-16 -       -       -      
+#0.09  < 2e-16 0.01007 -       -   
+#0.12  < 2e-16 0.00023 1.00000 -      
+#0.15  < 2e-16 0.00071 1.00000 1.00000
+
+
+#MIXED ERRORS
+anovaerrorcol <- aov(MixedErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorcol)
+summary(anovaerrorcol)
+#p=0.646
+
+
+#DROP 1 ERRORs
+anovaerrorcol <- aov(Drop1ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorcol)
+summary(anovaerrorcol)
+#7.21e-06 ***
+
+posthocerrorcol <- pairwise.t.test(errorcol$Drop1ErrorsPercentage, errorcol$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorcol)
+#      0.03    0.06   0.09   0.12  
+#0.06  0.2249  -      -      -     
+#0.09  0.0129  1.0000 -      -   
+#0.12  0.0012  0.9364 1.0000 -           
+#0.15  3.6e-06 0.0215 0.3349 1.0000
+
+
+#DROP 2 ERRORs
+anovaerrorcol <- aov(Drop2ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorcol)
+summary(anovaerrorcol)
+#0.00142 **
+
+posthocerrorcol <- pairwise.t.test(errorcol$Drop2ErrorsPercentage, errorcol$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorcol)
+#      0.03    0.06   0.09   0.12  
+#0.06  1.0000 -      -      - 
+#0.09  1.0000 1.0000 -      - 
+#0.12  0.5508 0.7619 0.5065 -            
+#0.15  0.0078 0.0126 0.0069 1.0000
+
+
+#COMBINATION ERRORs
+anovaerrorcol <- aov(CombinationErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorcol)
+summary(anovaerrorcol)
+#0.0322 *
+
+posthocerrorcol <- pairwise.t.test(errorcol$CombinationErrorsPercentage, errorcol$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorcol)
+#      0.03    0.06   0.09   0.12  
+#0.06  1.0000 -      -      - 
+#0.09  0.50   1.00   -      -  
+#0.12  0.31   1.00   1.00   -             
+#0.15  1.00   1.00   1.00   1.00
+
+
+#==================
+#ELEVATION
+
+#MASKER ERRORS
+anovaerrorelev <- aov(MaskerErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorelev)
+summary(anovaerrorelev)
+#p=7.28e-07 ***
+
+posthocerrorelev <- pairwise.t.test(errorelev$MaskerErrorsPercentage, errorelev$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorelev)
+#      0.03    0.06   0.09   0.12  
+#0.06  6.6e-05   -     -      -       
+#0.09  1.1e-08 0.50    -      - 
+#0.12  2.2e-09 0.22  1.00     -     
+#0.15  4.8e-09 0.33  1.00    1.00
+
+
+#MIXED ERRORS
+anovaerrorelev <- aov(MixedErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorelev)
+summary(anovaerrorelev)
+#0.00297 **
+
+posthocerrorelev <- pairwise.t.test(errorelev$MixedErrorsPercentage, errorelev$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorelev)
+#      0.03    0.06   0.09   0.12  
+#0.06  1.000   -      -      -  
+#0.09  1.000   1.000  -      -  
+#0.12  1.000   0.180  0.374  -       
+#0.15  0.307   0.023  0.056  1.000
+
+
+#DROP 1 ERRORS
+anovaerrorelev <- aov(Drop1ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorelev)
+summary(anovaerrorelev)
+#0.00684 **
+
+posthocerrorelev <- pairwise.t.test(errorelev$Drop1ErrorsPercentage, errorelev$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorelev)
+#      0.03    0.06   0.09   0.12  
+#0.06  0.0589  -      -      -  
+#0.09  0.0156  1.0000 -      -   
+#0.12  0.0329  1.0000 1.0000 -         
+#0.15  0.0046  1.0000 1.0000 1.0000
+
+
+#DROP 2 ERRORS
+anovaerrorelev <- aov(Drop2ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorelev)
+summary(anovaerrorelev)
+#0.00843 **
+
+posthocerrorelev <- pairwise.t.test(errorelev$Drop2ErrorsPercentage, errorelev$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorelev)
+#      0.03  0.06  0.09  0.12  
+#0.06  1.00  -     -     -  
+#0.09  1.00  0.74  -     -   
+#0.12  1.00  0.48  1.00  -        
+#0.15  0.48  0.11  1.00  1.00
+
+
+#DROP 2 ERRORS
+anovaerrorelev <- aov(CombinationErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorelev)
+summary(anovaerrorelev)
+#0.322
+
+
+#==================
+#FRONT-BACK
+
+#MASKER ERRORS
+anovaerrorfb <- aov(MaskerErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorfb)
+summary(anovaerrorfb)
+#p=4.51e-07 ***
+
+posthocerrorfb <- pairwise.t.test(errorfb$MaskerErrorsPercentage, errorfb$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorfb)
+#      0.03    0.06   0.09   0.12  
+#0.06  5.0e-05 -      -      -        
+#0.09  1.1e-09 0.1776 -      -   
+#0.12  3.0e-11 0.0214 1.0000 -        
+#0.15  4.1e-12 0.0056 1.0000 1.0000
+
+
+#MIXED ERRORS
+anovaerrorfb <- aov(MixedErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorfb)
+summary(anovaerrorfb)
+#p=0.0432 *
+
+posthocerrorfb <- pairwise.t.test(errorfb$MixedErrorsPercentage, errorfb$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorfb)
+#     0.03 0.06 0.09 0.12
+#0.06 1.00 -    -    -   
+#0.09 1.00 1.00 -    -   
+#0.12 1.00 0.58 1.00 -   
+#0.15 1.00 1.00 1.00 1.00
+
+#Drop 1 ERRORS
+anovaerrorfb <- aov(Drop1ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorfb)
+summary(anovaerrorfb)
+#p=0.00276 **
+
+posthocerrorfb <- pairwise.t.test(errorfb$Drop1ErrorsPercentage, errorfb$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorfb)
+#     0.03  0.06  0.09  0.12 
+#0.06 1.000 -     -     -    
+#0.09 1.000 1.000 -     -    
+#0.12 0.085 1.000 1.000 -    
+#0.15 0.029 0.602 1.000 1.000
+
+
+#Drop 2 ERRORS
+anovaerrorfb <- aov(Drop2ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorfb)
+summary(anovaerrorfb)
+#p=0.0422 *
+
+posthocerrorfb <- pairwise.t.test(errorfb$Drop2ErrorsPercentage, errorfb$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorfb)
+#     0.03 0.06 0.09 0.12
+#0.06 1.00 -    -    -   
+#0.09 1.00 0.90 -    -   
+#0.12 1.00 1.00 1.00 -   
+#0.15 1.00 0.13 1.00 1.00
+
+#COMBINATION ERRORS
+anovaerrorfb <- aov(CombinationErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorfb)
+summary(anovaerrorfb)
+#p=0.0111 *
+
+posthocerrorfb <- pairwise.t.test(errorfb$CombinationErrorsPercentage, errorfb$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorfb)
+#     0.03 0.06 0.09 0.12
+#0.06 1.00 -    -    -   
+#0.09 1.00 0.90 -    -   
+#0.12 1.00 1.00 1.00 -   
+#0.15 1.00 0.13 1.00 1.00
+
+#==================
+#AZIMUTH
+
+#MASKER ERROR
+anovaerrorazi <- aov(MaskerErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorazi)
+summary(anovaerrorazi)
+#p=2.03e-05 ***
+
+posthocerrorazi <- pairwise.t.test(errorazi$MaskerErrorsPercentage, errorazi$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorazi)
+#      0.03    0.06   0.09   0.12  
+#0.06  7.8e-06 -    -    -       
+#0.09  3.0e-05 1.00 -    -     
+#0.12  2.9e-07 1.00 1.00 -        
+#0.15  1.8e-09 0.66 0.32 1.00
+
+
+#MIXED ERROR
+anovaerrorazi <- aov(MixedErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorazi)
+summary(anovaerrorazi)
+#p=1.7e-07 ***
+
+posthocerrorazi <- pairwise.t.test(errorazi$MixedErrorsPercentage, errorazi$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorazi)
+#     0.03    0.06   0.09   0.12  
+#0.06 0.0873  -      -      -     
+#0.09 2.1e-06 0.0442 -      -     
+#0.12 2.4e-05 0.2096 1.0000 -     
+#0.15 8.8e-08 0.0046 1.0000 1.0000
+
+
+#DROP 1 ERROR
+anovaerrorazi <- aov(Drop1ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorazi)
+summary(anovaerrorazi)
+#p=0.0192 *
+
+posthocerrorazi <- pairwise.t.test(errorazi$Drop1ErrorsPercentage, errorazi$SegmentLength, p.adjust.method = "bonferroni")
+print(posthocerrorazi)
+#     0.03 0.06 0.09 0.12
+#0.06 1.00 -    -    -   
+#0.09 1.00 1.00 -    -   
+#0.12 1.00 1.00 1.00 -   
+#0.15 0.16 0.29 1.00 1.00
+
+#DROP 2 ERROR
+anovaerrorazi <- aov(Drop2ErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorazi)
+summary(anovaerrorazi)
+#p=0.169
+
+
+#COMBINATION ERROR
+anovaerrorazi <- aov(CombinationErrorsPercentage ~ SegmentLength + Error(Participant/SegmentLength), data = errorazi)
+summary(anovaerrorazi)
+#p=0.673
