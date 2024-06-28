@@ -1,0 +1,136 @@
+
+#azimuth
+full.modazi <- glmer(score_bin ~ 1 + masker_segment_length  + (1 | subject_id), 
+                     data = masterazi, family = binomial(link = "logit"))
+
+
+red.modazi <- glmer(score_bin ~ 1 +  (1 | subject_id), 
+                    data = masterazi, family = binomial(link = "logit"))
+
+red.modazi <- glm(score_bin ~ 1 + masker_segment_length  , 
+                    data = masterazi, family = binomial(link = "logit"))
+
+anova(red.modazi, full.modazi)
+anova(full.modazi,red.modazi)
+#target talker gender no sig. impact on performance (p=  0.6592) -> exclude from model
+#msl sig impact p = 5.101e-14 ***
+#sig impact of subject_id (before p= 0.01028) p< 2.2e-16 ***
+
+summary(full.modazi)
+check_model(full.modazi)
+#Scaled residuals: 
+#Min      1Q  Median      3Q     Max 
+#-2.5273 -0.6589  0.3870  0.7174  2.1498 
+shapiro.test(residuals(full.modazi)) #p-value < 2.2e-16 -> residuals not normally distributed
+hist(residuals(full.modazi), breaks = 20, main = "Histogram of Residuals")
+check_residuals(full.modazi) #OK: Simulated residuals appear as uniformly distributed (p = 0.937).
+boxplot(residuals(full.modazi) ~ masker_segment_length, data = masterazi, 
+        main = "Residuals by Segment Length Azimuth", xlab = "Masker Segment Length", ylab = "Residuals")
+
+boxplot(score ~ masker_segment_length, data = mastercol, 
+        main = "Score by Segment Length Col", xlab = "Masker Segment Length", ylab = "Score")
+
+#Random effects:
+#Groups     Name        Variance Std.Dev.
+#subject_id (Intercept) 0.4655   0.6823  
+#Number of obs: 1580, groups:  subject_id, 20
+
+#Fixed effects:
+#                      Estimate Std. Error z value Pr(>|z|)    
+#(Intercept)            -0.9282     0.1995  -4.652 3.28e-06 ***
+#  masker_segment_length   9.5154     1.2846   7.407 1.29e-13 ***
+#  ---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Correlation of Fixed Effects:
+#  (Intr)
+#mskr_sgmnt_ -0.583
+
+
+
+#elevation
+full.modelev <- glmer(score_bin ~ 1 + masker_segment_length + (1 | subject_id), 
+                      data = masterelev, family = binomial(link = "logit"))
+
+
+red.modelev <- glmer(score_bin ~ 1 + (1 | subject_id), 
+                     data = masterelev, family = binomial(link = "logit"))
+
+red.modelev <- glm(score_bin ~ 1 + masker_segment_length, 
+                   data = masterelev, family = binomial(link = "logit"))
+
+anova(red.modelev, full.modelev)
+anova(full.modelev,red.modelev)
+#sig. impact of talker gender 0.001143 ** -> excluded for better comparibility
+#sig. impact of sml p= (1.385e-13 ***) 1.111e-13 ***
+#sig. impact of subject_id p< 2.2e-16 ***
+
+summary(full.modelev)
+#AIC 1815.6 mit tg, ohne 1824.2
+check_model(full.modelev)
+#Scaled residuals: 
+#Min       1Q   Median       3Q      Max 
+#-2.69102 -0.92998  0.05636  0.78301  2.08208 
+shapiro.test(residuals(full.modelev)) #p-value < 2.2e-16 -> residuals not normally distributed
+hist(residuals(full.modelev), breaks = 20, main = "Histogram of Residuals")
+check_residuals(full.modelev) #Simulated residuals appear as uniformly distributed (p = 0.435).
+boxplot(residuals(full.modelev) ~ masker_segment_length, data = masterelev, 
+        main = "Residuals by Segment Length Elevation", xlab = "Masker Segment Length", ylab = "Residuals")
+#Random effects:
+#Groups     Name        Variance Std.Dev.
+#subject_id (Intercept) 0.5321   0.7295  
+#Number of obs: 1620, groups:  subject_id, 20
+
+#Fixed effects:
+#                      Estimate Std. Error z value Pr(>|z|)    
+#  (Intercept)            -1.8425     0.2202  -8.368  < 2e-16 ***
+#  masker_segment_length  10.1958     1.3996   7.285 3.22e-13 ***
+
+#Correlation of Fixed Effects:
+#             (Intr)
+#mskr_sgmnt_ -0.616
+
+
+
+#front-back
+full.modfb <- glmer(score_bin ~ 1 + masker_segment_length +  (1 | subject_id), 
+                    data = masterfb, family = binomial(link = "logit"))
+
+
+red.modfb <- glmer(score_bin ~ 1  + (1 | subject_id), 
+                   data = masterfb, family = binomial(link = "logit"))
+
+red.modfb <- glm(score_bin ~ 1 + masker_segment_length , 
+                   data = masterfb, family = binomial(link = "logit"))
+
+anova(red.modfb,full.modfb)
+anova(full.modfb,red.modfb)
+#no sig. effect of talker gender p=0.2078 -> exclude from model
+#sig. impact of sml p=1.457e-09 ***
+#sig impact of subject_id p< 2.2e-16 ***
+
+summary(full.modfb)
+check_model(full.modfb)
+#Scaled residuals: 
+#Min       1Q   Median       3Q      Max 
+#-2.26816 -0.92244  0.06571  0.82946  1.92200 
+#shapiro.test(residuals(full.modfb)) #p-value < 2.2e-16 -> residuals not normally distributed
+hist(residuals(full.modfb), breaks = 20, main = "Histogram of Residuals")
+check_residuals(full.modfb) #OK: Simulated residuals appear as uniformly distributed (p = 0.640).
+boxplot(residuals(full.modfb) ~ masker_segment_length, data = masterfb, 
+        main = "Residuals by Segment Length Front-Back", xlab = "Masker Segment Length", ylab = "Residuals")
+#Random effects:
+#Groups     Name        Variance Std.Dev.
+#subject_id (Intercept) 0.4112   0.6413  
+#Number of obs: 1620, groups:  subject_id, 20
+
+#Fixed effects:
+#                      Estimate Std. Error z value Pr(>|z|)    
+#(Intercept)            -1.5381     0.1999  -7.692 1.44e-14 ***
+#  masker_segment_length   8.0060     1.3374   5.986 2.14e-09 ***
+#  ---
+#  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Correlation of Fixed Effects:
+#  (Intr)
+#mskr_sgmnt_ -0.636
