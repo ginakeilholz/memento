@@ -1,0 +1,89 @@
+#ANOVA for each plane
+sig_level <- c(0.001, 0.01, 0.05, 0.1, 1)
+signif <- 0.05
+sig_codes <- c("***", "**", "*", " ", " ")
+
+
+#azimuth
+
+anovaazi <- aov(score ~ masker_segment_length+ Error(subject_id/masker_segment_length), data = masterazi)
+summary(anovaazi)
+#p=1.16e-05 ***
+
+posthocazi <- pairwise.t.test(masterazi$score, masterazi$masker_segment_length, p.adjust.method = "bonferroni")
+print(posthocazi)
+#      0.03    0.06   0.09   0.12  
+#0.06  0.0002  -      -      -     
+#0.09  3.2e-05 1.0000 -      -     
+#0.12  1.4e-06 1.0000 1.0000 -     
+#0.15  5.1e-09 0.4821 1.0000 1.0000
+
+# Create a subset of the pairwise t-test results matrix with only significant pairs
+sig_pairsazi <- posthocazi$p.value < signif
+
+# Replace non-significant pairs with NA
+sig_pairsazi[upper.tri(sig_pairsazi)] <- NA
+
+
+#elevation
+
+anovaelev <- aov(score ~ masker_segment_length+ Error(subject_id/masker_segment_length), data = masterelev)
+summary(anovaelev)
+#p=1.27e-06 ***
+
+posthocelev <- pairwise.t.test(masterelev$score, masterelev$masker_segment_length, p.adjust.method = "bonferroni")
+print(posthocelev)
+#      0.03    0.06   0.09   0.12  
+#0.06  0.00012  -      -      -     
+#0.09  9.5e-10 0.33529 -      -     
+#0.12  3.9e-14 0.00403 1.00000 -     
+#0.15  1.0e-10 0.13796 1.00000 1.00000
+
+# Create a subset of the pairwise t-test results matrix with only significant pairs
+sig_pairselev <- posthocelev$p.value < signif
+
+# Replace non-significant pairs with NA
+sig_pairselev[upper.tri(sig_pairselev)] <- NA
+
+
+#front-back
+
+anovafb <- aov(score ~ masker_segment_length+ Error(subject_id/masker_segment_length), data = masterfb)
+summary(anovafb)
+#p=1.74e-06 ***
+
+posthocfb <- pairwise.t.test(masterfb$score, masterfb$masker_segment_length, p.adjust.method = "bonferroni")
+print(posthocfb)
+#      0.03    0.06   0.09   0.12  
+#0.06  7.5e-05  -      -      -     
+#0.09  6.6e-09 0.859   -      -     
+#0.12  3.0e-13 0.015  1.00000 -     
+#0.15  5.7e-11 0.146 1.00000 1.00000
+
+# Create a subset of the pairwise t-test results matrix with only significant pairs
+sig_pairsfb <- posthocfb$p.value < signif
+
+# Replace non-significant pairs with NA
+sig_pairsfb[upper.tri(sig_pairsfb)] <- NA
+
+
+#colocated
+
+
+anovacol <- aov(score ~ masker_segment_length+ Error(subject_id/masker_segment_length), data = mastercol)
+summary(anovacol)
+#p=2.42e-09 ***
+
+posthoccol <- pairwise.t.test(mastercol$score, mastercol$masker_segment_length, p.adjust.method = "bonferroni")
+print(posthoccol)
+#      0.03    0.06   0.09   0.12  
+#0.06  2e-13   -      -      -     
+#0.09  <2e-16 0.011   -      -     
+#0.12  <2e-16 0.043  1.00000 -     
+#0.15  <2e-16 0.410  1.00000 1.00000
+
+# Create a subset of the pairwise t-test results matrix with only significant pairs
+sig_pairscol <- posthoccol$p.value < signif
+
+# Replace non-significant pairs with NA
+sig_pairscol[upper.tri(sig_pairsfb)] <- NA
