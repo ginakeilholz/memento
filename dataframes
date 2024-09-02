@@ -1,0 +1,25 @@
+master=read.table(file="C:/Users/ginak/OneDrive/Dokumente/Uni/Neuro/Free Field/reversed speech/statistics R/reversed_speech.csv",header=TRUE,sep=",")
+master[ master == "" ] <- NA
+# Create a new column score_bin based on score values
+master$score_bin <- ifelse(master$score < 1, 0, 1)
+
+# Filter the data for only the "experiment" task phase
+masterexp <- master %>%
+  filter(task_phase == "experiment")
+
+#filter data for only single source
+mastersingle <- masterexp %>%
+  filter(task_type == "single_source")
+#filter data for only multi source
+mastermulti <- masterexp %>%
+  filter(task_type == "multi_source")
+
+#filter for each setting 
+masterazi <- masterexp %>%
+  filter(task_plane == "azimuth")
+masterelev <- masterexp %>%
+  filter(task_plane == "elevation")
+masterfb <- masterexp %>%
+  filter(task_plane == "front-back")
+mastercol <- masterexp %>%
+  filter(task_plane == "collocated")
