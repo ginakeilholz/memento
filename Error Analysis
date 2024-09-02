@@ -3,7 +3,7 @@
 participants <- unique(mastercol$subject_id)
 segment_length <- unique(mastercol$masker_segment_length)
 
-# Initialize an empty dataframe to store the results
+# empty dataframe to store the results
 errorcol <- data.frame(
   Participant = integer(),
   SegmentLength = numeric(),
@@ -32,7 +32,7 @@ for (participant in participants) {
     # Calculate the total number of responses for the current segment length
     total_responses <- nrow(participant_data)
     
-    # Calculate the errors using the provided logic
+    # Calculating errors
     correct <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 1)
     masker_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker == 1)
     mixed_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker != 0 & participant_data$score_masker != 1 & participant_data$score != 0 & participant_data$score != 1)
@@ -40,7 +40,7 @@ for (participant in participants) {
     drop2_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker == 0)
     combination_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker != 1 & participant_data$score_masker != 0)
     
-    # Calculate the percentages for each error type
+    # Calculating percentages for each error type
     correct_percentage <- (correct / total_responses) * 100
     masker_errors_percentage <- (masker_errors / total_responses) * 100
     mixed_errors_percentage <- (mixed_errors / total_responses) * 100
@@ -48,7 +48,7 @@ for (participant in participants) {
     drop2_errors_percentage <- (drop2_errors / total_responses) * 100
     combination_errors_percentage <- (combination_errors / total_responses) * 100
     
-    # Create a temporary dataframe with the current result
+    # temporary dataframe with the current result
     temp_result <- data.frame(
       Participant = participant,
       SegmentLength = segment_length,
@@ -66,19 +66,18 @@ for (participant in participants) {
       CombinationErrorsPercentage = combination_errors_percentage
     )
     
-    # Append the temporary result to the main results dataframe
+    # Appending temporary result to the main results dataframe
     errorcol <- rbind(results, temp_result)
   }
 }
 
-# Print the results
 print(errorcol)
-# Define a function to calculate errors and percentages
+# function to calculate errors and percentages
 calculate_errors <- function(data) {
   participants <- unique(data$subject_id)
   segment_lengths <- unique(data$masker_segment_length)
   
-  # Initialize an empty dataframe to store the results
+  # empty dataframe to store the results
   results <- data.frame(
     Participant = integer(),
     SegmentLength = numeric(),
@@ -107,7 +106,7 @@ calculate_errors <- function(data) {
       # Calculate the total number of responses for the current segment length
       total_responses <- nrow(participant_data)
       
-      # Calculate the errors using the provided logic
+      # Calculating errors 
       correct <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 1)
       masker_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker == 1)
       mixed_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score_masker != 0 & participant_data$score_masker != 1 & participant_data$score != 0 & participant_data$score != 1)
@@ -115,7 +114,7 @@ calculate_errors <- function(data) {
       drop2_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker == 0)
       combination_errors <- sum(participant_data$masker_segment_length == segment_length & participant_data$score == 0 & participant_data$score_masker != 1 & participant_data$score_masker != 0)
       
-      # Calculate the percentages for each error type
+      # Calculating percentages for each error type
       correct_percentage <- (correct / total_responses) * 100
       masker_errors_percentage <- (masker_errors / total_responses) * 100
       mixed_errors_percentage <- (mixed_errors / total_responses) * 100
@@ -123,7 +122,7 @@ calculate_errors <- function(data) {
       drop2_errors_percentage <- (drop2_errors / total_responses) * 100
       combination_errors_percentage <- (combination_errors / total_responses) * 100
       
-      # Create a temporary dataframe with the current result
+      #temporary dataframe with the current result
       temp_result <- data.frame(
         Participant = participant,
         SegmentLength = segment_length,
@@ -141,7 +140,7 @@ calculate_errors <- function(data) {
         CombinationErrorsPercentage = combination_errors_percentage
       )
       
-      # Append the temporary result to the main results dataframe
+      # temporary result to the main results dataframe
       results <- rbind(results, temp_result)
     }
   }
